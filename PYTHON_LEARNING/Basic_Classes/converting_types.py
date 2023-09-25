@@ -1,0 +1,3 @@
+#It is possible to convert types in Python, like 'int' to 'str', 'str' to 'bool', etc...
+print(int('1') + 1)
+print(float('2') + 2)
