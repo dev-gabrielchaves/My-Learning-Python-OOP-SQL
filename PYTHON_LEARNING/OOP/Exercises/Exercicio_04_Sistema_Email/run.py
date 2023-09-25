@@ -16,10 +16,10 @@ while True:
 
     while True:
 
-        opcao = input("Deseja adicionar outro destinatario? ")
+        opcao = input("\nDeseja adicionar outro destinatario? ")
 
         if opcao == 's':
-            nome_destinaratio = input("Defina o nome do destinatio: ")
+            nome_destinaratio = input("\nDefina o nome do destinatio: ")
             email_destinaratio = input("Defina o email do destinatio: ")
 
             gerenciadorEmail.definir_destinatarios(nome_destinaratio, email_destinaratio)

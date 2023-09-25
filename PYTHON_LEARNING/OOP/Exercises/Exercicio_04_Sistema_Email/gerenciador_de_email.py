@@ -20,7 +20,7 @@ class GerenciadorEmail:
     
     def enviar_email(self) -> None:
 
-        print("Enviando mensagem:\n" \
+        print("\nEnviando mensagem...\n\n" \
               f"Nome do remetente: {self.__nome_remetente}\n" \
                 f"Email do remetente: {self.__email_remetente}\n" \
                     f"Título do email: {self.__titulo}\n" \
@@ -29,3 +29,4 @@ class GerenciadorEmail:
         for destinatario in self.__lista_de_destinatarios:
             for key in destinatario:
                 print(f'{key}: {destinatario[key]}')
+            print()
