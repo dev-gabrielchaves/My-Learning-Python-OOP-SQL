@@ -5,8 +5,8 @@ class MailManager:
         self.__sender_mail = sender_mail
         self.__title = None
         self.__body = None
-        self.__adressee_list = []
-        self.mail_box = []
+        self.adressee_list = []
+        self.__mail_box = []
 
     def create_mail(self, title: str, body: str) -> None:
         self.__title = title
@@ -17,7 +17,7 @@ class MailManager:
             'Name' : name,
             'Mail' : mail
         }
-        self.__adressee_list.append(new_adressee)
+        self.adressee_list.append(new_adressee)
     
     def send_mail(self) -> None:
 
@@ -26,8 +26,22 @@ class MailManager:
             'Sender Mail' : self.__sender_mail,
             'Mail Title' : self.__title,
             'Mail Body' : self.__body,
-            'Adressee' : self.__adressee_list
+            'Adressee' : self.adressee_list
         }
-        self.mail_box.append(new_mail)
+        self.__mail_box.append(new_mail)
 
-        print("Mail sent!")
+        print("\nMail sent!\n")
+    
+    def show_mail_box(self) -> None:
+        
+        for mail in self.__mail_box:
+            for key in mail:
+                if key == 'Adressee':
+                    print("\nAdressee(s):\n")
+                    for i in mail[key]:
+                        for j in i:
+                            print(f"{j}: {i[j]}")
+                    print("\n-----------------------")
+                else:
+                    print(f"{key}: {mail[key]}")
+            print()
