@@ -1,0 +1,426 @@
+Aprendizado SQL
+
+-- O comando 'SELECT' mostra as colunas selecionadas.
+-- O comando 'FROM' é para indicar de qual tabela esses dados serão extraídos.
+SELECT FirstName, LastName
+FROM person.person;
+
+-- O comando 'DISTINCT' mostra elementos da coluna selecionada sem repeti-los.
+SELECT DISTINCT LastName
+FROM person.Person;
+
+-- O comando 'WHERE' serve para agregarmos condições nos dados que queremos ver da tabela.
+/*
+OPERADOR       -       DESCRIÇÃO
+=                      IGUAL
+>                      MAIOR QUE  
+<                      MENOR QUE
+>=                     MAIOR QUE OU IGUAL
+<=                     MENOR QUE OU IGUAL
+<>                     DIFERENTE DE
+AND                    OPERADOR LÓGICO 'E' 
+OR                     OPERADOR LÓGICO 'OU' 
+*/
+
+SELECT *
+FROM Production.Product
+WHERE ListPrice >= 1500 AND ListPrice <= 3000;
+
+SELECT *
+FROM Production.Product
+WHERE Color = 'Red';
+
+-- Desafio 1!
+/*A equipe de produção de produtos precisa do nome de todas as peças 
+que pesam mais de 500kg e menos de 700kg para inspeção.*/
+SELECT Name
+FROM Production.Product
+WHERE Weight > 500 and Weight < 700
+
+-- Desafio 2!
+/*Foi pedido pelo marketing uma relação de todos os empregados que são
+casados e assalariados.*/
+SELECT *
+FROM HumanResources.Employee
+WHERE MaritalStatus = 'M' AND SalariedFlag = 1;
+
+-- Desafio 3!
+/*Um usuário chamado Peter Krebs está devendo um pagamento, consiga o
+email dele para que possamos enviar uma cobrança.*/
+SELECT *
+FROM Person.Person
+WHERE FirstName = 'Peter' and LastName = 'Krebs';
+
+SELECT EmailAddress
+FROM Person.EmailAddress
+WHERE BusinessEntityID = 26;
+
+
+-- O comando 'COUNT' retorna o número de linhas que bate com a condição determinada.
+
+-- Para saber o número de produtos que eu tenho.
+SELECT COUNT(*)
+FROM Production.Product
+
+-- Como saber quantos tamanhos diferentes de produtos eu tenho.
+SELECT COUNT(DISTINCT SIZE)
+FROM Production.Product
+
+-- O comando 'TOP' mostra apenas as primeiras linhas de um número pre estabelecido.
+SELECT TOP 10 *
+FROM Person.Person
+
+-- O comando 'ORDER BY' ordena elementos de uma certa coluna em ordem crescente ou decrescente.
+SELECT FirstName, LastName
+FROM Person.Person
+ORDER BY FirstName asc, LastName desc;
+
+-- Desafio 1!
+-- Obter o ProductID dos 10 produtos mais caros cadastrados no sistema, listando do mais caro para o mais barato.
+SELECT TOP 10 ProductID
+FROM Production.Product
+ORDER BY ListPrice desc
+
+-- Desafio 2!
+-- Obter o nome e número dos produtos que tem ProductID entre 1~4.
+SELECT TOP 4 Name, ProductNumber
+FROM Production.Product
+ORDER BY ProductID asc
+
+-- O comando 'BETWEEN' mostra linhas de acordo com um range pré-estabelecido.
+SELECT *
+FROM Production.Product
+WHERE ListPrice BETWEEN 1000 AND 1500
+ORDER BY ListPrice asc;
+
+-- Utilzando o comando 'NOT'
+SELECT *
+FROM Production.Product
+WHERE ListPrice NOT BETWEEN 1000 AND 1500
+ORDER BY ListPrice asc;
+
+-- O comando 'IN' retornam elementos determinados.
+SELECT *
+FROM Person.Person
+WHERE BusinessEntityID IN (5, 10, 15);
+
+-- To explain the commmand 'LIKE' let's say that you wanna find a person in your database that her name starts with 'Ovi...'.
+SELECT *
+FROM Person.Person
+WHERE FirstName LIKE 'Ovi%';
+
+-- If you remenber just the end.
+SELECT *
+FROM Person.Person
+WHERE FirstName LIKE '%to';
+
+-- If you remember something on the middle.
+SELECT *
+FROM Person.Person
+WHERE FirstName LIKE '%ne%';
+
+-- If you remember that is just one letter missing.
+SELECT *
+FROM Person.Person
+WHERE FirstName LIKE '%ne_';
+
+-- Desafios englobando todos os fundamentos básicos de SQL vistos até agora.
+
+-- 1) Quantos produtos temos cadastrados no sistema que custam mais de 1500 doláres?
+SELECT COUNT(ListPrice)
+FROM Production.Product
+WHERE ListPrice > 1500;
+
+-- 2) Quantas pessoas temos com o sobrenome que inicia com a letra 'P'?
+SELECT COUNT(LastName)
+FROM Person.Person
+WHERE LastName LIKE 'P%';
+
+-- 3) Em quantas cidades únicas estão cadastrados nossos clientes?
+SELECT COUNT(DISTINCT CITY)
+FROM Person.Address;
+
+-- 4) Quantos produtos vermelhos tem preço entre 500 e 1000 doláres?
+SELECT COUNT(*)
+FROM Production.Product
+WHERE Color = 'Red' AND ListPrice BETWEEN 500 AND  1000;
+
+-- 5) Quantos produtos cadastrados tem a palavra 'road' no nome deles?
+SELECT COUNT (Name)
+FROM Production.Product
+WHERE Name LIKE '%road%';
+
+-- Os comandos 'SUM', 'MIN', 'MAX' e 'AVG' são bem auto explicativos.
+SELECT SUM(LineTotal) AS 'TOTAL SUM' -- O comando 'AS' serve para dar nome a coluna.
+FROM Sales.SalesOrderDetail;
+
+SELECT AVG(LineTotal)
+FROM Sales.SalesOrderDetail;
+
+-- Comando 'GROUP BY'.
+-- Vamos supor que eu queira saber quantos nomes tenho de cada nome em uma tabela.
+SELECT FirstName, COUNT(FirstName) AS 'CONTAGEM' 
+FROM Person.Person
+GROUP BY FirstName
+ORDER BY CONTAGEM DESC;
+
+-- Agora na tabela production.product eu quero saber a média de preço para os produtos que são prata.
+SELECT Color, AVG(ListPrice)
+FROM Production.Product
+WHERE Color = 'Silver'
+GROUP BY Color;
+
+-- Exercício... Eu preciso saber quantas pessoas tem o mesmo MiddleName agrupadas por MiddleName.
+SELECT MiddleName, COUNT(MiddleName) AS 'CONTAGEM'
+FROM Person.Person
+WHERE MiddleName <> 'NULL'
+GROUP BY MiddleName
+ORDER BY CONTAGEM DESC;
+
+-- Exercício... Eu preciso saber em média qual é a quantidade(quantity) que cada produto é vendido na loja.
+SELECT ProductID, AVG(OrderQty)
+FROM sales.SalesOrderDetail
+GROUP BY ProductID
+ORDER BY ProductID DESC;
+
+-- Exercício... Eu quero saber quais foram as 10 vendas que no total tiveram os maiores valores de venda por produto, ordenar do maior para o menor.
+SELECT TOP 10 ProductID, SUM(LineTotal) AS 'Soma'
+FROM Sales.SalesOrderDetail
+GROUP BY ProductID
+ORDER BY Soma DESC;
+
+-- Exercício... Eu preciso saber quantos produtos e qual a quantidade média de produtos temos cadastrados nas nossas ordens de serviço, agrupadas por productID
+SELECT ProductID, SUM (ProductID) AS 'SOMA', AVG(OrderQty) AS 'MEDIA'
+FROM Production.WorkOrder
+GROUP BY ProductID
+ORDER BY MEDIA DESC;
+
+-- Utilizando o 'HAVING' condição usada após o 'GROUP BY'.
+
+-- Exercício... Estamos querendo identificar as provincias com o maior número de cadastros no nosso sistema, então é preciso encontrar...
+-- quais provincias estão registradas no banco de dados mais de 1000 vezes.
+
+SELECT StateProvinceID, SUM(StateProvinceID)
+FROM Person.Address
+GROUP BY StateProvinceID
+HAVING SUM(StateProvinceID) > 1000
+ORDER BY SUM(StateProvinceID) DESC;
+
+-- Outro exercício...
+
+SELECT ProductID, SUM(LineTotal) AS 'SOMA'
+FROM Sales.SalesOrderDetail
+GROUP BY ProductID
+HAVING SUM(LineTotal) < 1000000
+ORDER BY SUM(LineTotal) DESC;
+
+-- Using INNER JOIN to literally join tables.
+
+SELECT TOP 10 *
+FROM Person.PhoneNumberType
+
+SELECT TOP 10 *
+FROM Person.PersonPhone
+
+SELECT TOP 10 pp.BusinessEntityID, pnt.Name, pp.PhoneNumberTypeID, pp.PhoneNumber
+FROM Person.PersonPhone AS PP
+INNER JOIN Person.PhoneNumberType AS PNT ON pp.PhoneNumberTypeID = pnt.PhoneNumberTypeID
+ORDER BY BusinessEntityID ASC
+
+-- Another exercise...
+
+SELECT TOP 10 *
+FROM Person.StateProvince
+
+SELECT TOP 10 *
+FROM Person.Address
+
+SELECT pa.AddressID, pa.City, pp.StateProvinceID, pp.Name
+FROM Person.Address AS PA
+INNER JOIN Person.StateProvince AS PP ON pa.StateProvinceID = pp.StateProvinceID
+ORDER BY AddressID ASC
+
+-- The self-join command it is used to compare data from the same table.
+-- So let's say that i want the name of all of the customers that are from the same region.
+
+SELECT a.ContactName, a.Region, b.ContactName, b.Region
+FROM Customers AS a, Customers AS b
+WHERE a.Region = b.Region;
+
+-- Another example... Let's say now that i want to find the name and the hiring date of all of the employees that were hired on the same year.
+
+SELECT a.FirstName, a.HireDate, b.FirstName, b.HireDate
+FROM Employees AS a,Employees AS b
+WHERE DATEPART(YEAR, a.HireDate) = DATEPART(YEAR, b.HireDate);
+
+-- Exercise... I want to know from the table (ORDER DETAILS), which products have the same discount percentage.
+
+SELECT a.ProductID, b.ProductID
+FROM OrderDetails AS a, OrderDetails AS b
+WHERE a.Discount = b.Discount
+
+-- Now let's see the concept of 'SUBQUERIES' or 'SUBSELECTS'
+-- To explain that concept let's suppose that i want the name of all of products which it's listPrice is higher than the average price.
+
+-- Without 'SUBQUERIES' we could do it like this...
+SELECT AVG(ListPrice)
+FROM Production.Product
+
+SELECT Name, ListPrice
+FROM Production.Product
+WHERE ListPrice > 438.6662
+
+-- With 'SUBQUERIES' we can save a lot of code...
+SELECT Name, ListPrice
+FROM Production.Product
+WHERE ListPrice > (SELECT AVG(ListPrice) FROM Production.Product)
+
+-- Another example... Let's say that i want to know the name of my employees that has the role 'Design Engineer'.
+-- Let's first do it without using SUBQUERIES.
+-- I could do this first way...
+SELECT FirstName
+FROM Person.Person
+WHERE BusinessEntityID IN (5, 6, 15)
+
+SELECT *
+FROM HumanResources.Employee
+WHERE JobTitle = 'Design Engineer'
+
+-- Or this way using INNER JOIN...
+SELECT pp.FirstName
+FROM Person.Person AS pp
+INNER JOIN HumanResources.Employee AS hr ON pp.BusinessEntityID = hr.BusinessEntityID
+WHERE hr.JobTitle = 'Design Engineer'
+
+-- Now using SUBQUERIES...
+SELECT FirstName
+FROM Person.Person
+WHERE BusinessEntityID IN (SELECT BusinessEntityID 
+FROM HumanResources.Employee
+WHERE JobTitle = 'Design Engineer')
+
+-- Exercise... Find every address that are located in the state of 'Alberta'.
+SELECT *
+FROM Person.Address
+
+SELECT *
+FROM Person.StateProvince
+
+SELECT pa.AddressLine1, psp.Name
+FROM Person.Address AS pa
+INNER JOIN Person.StateProvince AS psp ON pa.StateProvinceID = psp.StateProvinceID
+WHERE psp.Name = 'Alberta'
+
+-- Another way to solve it...
+SELECT *
+FROM Person.Address
+WHERE StateProvinceID IN (
+SELECT StateProvinceID FROM Person.StateProvince
+WHERE Name = 'Alberta'
+)
+
+-- On SQL you can operate STRINGS as well...
+
+-- Let's say that i want to concatenate two colums...
+SELECT CONCAT(FirstName, ' ', LastName) AS FullName
+FROM Person.Person
+
+-- Let's say that i want to upper or lowercase my column elements...
+SELECT UPPER(FirstName), LOWER(LastName)
+FROM Person.Person
+
+-- If i want to replace something in a string or count how long a string is...
+SELECT REPLACE(FirstName, 'a', '#'), LEN(FirstName)
+FROM Person.Person
+
+-- CONCAT, LEN, UPPER, LOWER, SUBSTRING, REPLACE are some of the commands that we can use to operate Strings.
+
+-- On SQL we can also use math operations with elements, such as / * + -.
+
+-- Abaixo vemos como criar tabelas no SQL.
+
+/*
+CREATE TABLE Canal(
+CanalID int Primary Key,
+Nome varchar(150) not null,
+ContagemInscritos int default 0,
+DataCriacao datetime not null
+);
+
+SELECT * FROM Canal
+*/
+
+/*
+CREATE TABLE Video(
+VideoID int Primary Key,
+Nome varchar(150) not null,
+Visualizacoes int default 0,
+Likes int default 0,
+Dislikes int default 0,
+Duracao int not null,
+CanalID int Foreign Key REFERENCES Canal(CanalID)
+);
+*/
+
+-- Abaixo vemos como inserir valores nessas tabelas.
+
+/*
+INSERT INTO Canal(CanalID, Nome, ContagemInscritos, DataCriacao)
+VALUES(1, 'PewDiePie', 50000, 2020-01-01)
+
+SELECT * FROM Canal
+*/
+
+CREATE TABLE Aula(
+ID int Primary Key,
+Nome varchar(150) not null
+);
+
+INSERT INTO Aula(ID, Nome)
+VALUES
+(1, 'Aula_1'),
+(2, 'Aula_2'),
+(3, 'Aula_3'),
+(4, 'Aula_4')
+
+SELECT * FROM Aula
+
+-- Como mudar um valor existente em uma tabela? So usar o UPDATE.
+
+UPDATE Aula
+SET Nome = 'Mudei!'
+WHERE ID = 3
+
+SELECT * FROM Aula
+
+-- Como deletar algo da tabela? So usar o DELETE.
+
+DELETE FROM Aula
+WHERE ID = 3
+
+SELECT * FROM Aula
+
+-- Vamos usar o ALTER TABLE, util para executar ações em nossas tabelas.
+
+CREATE TABLE Tabela_Teste(
+ID int Primary Key,
+Nome varchar(100) not null,
+Idade int not null
+);
+
+-- Mudando categoria de coluna.
+
+ALTER TABLE Tabela_Teste
+ALTER COLUMN Nome varchar(150) not null
+
+-- Mudar o nome de uma coluna.
+
+EXEC sp_RENAME 'Tabela_Teste.Idade', 'IdadePessoa', 'COLUMN' 
+
+SELECT * FROM Tabela_Teste
+
+-- Mudar o nome da Tabela.
+
+EXEC sp_RENAME 'Tabela_Teste', 'Tabela_Nova'
+
+SELECT * FROM Tabela_Nova
