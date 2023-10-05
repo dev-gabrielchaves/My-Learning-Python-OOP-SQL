@@ -1,46 +1,77 @@
-"""
-The exercise description:
-A class that represents vehicles, as shown in the partially shown diagram below, keeping
-information about the vehicle's name, engine power in horsepower, and vehicle weight in kilograms. The class should have:
-• Encapsulated attributes, validating the values to be stored (define valid ranges for power
-and weight);
-• Constructor, receiving the initial values for all attributes;
-• Access methods (getters and setters) for all attributes;
-• Method to calculate the ratio between weight and power, given in hp/kg;
-• ToString method or __str__ to return the vehicle's data in text format.
-Write a program (Main) to test the Vehicle class, allowing the user to enter data for ten
-different vehicles and showing, in the end, the data of the vehicle with the lowest ratio between weight and power.
-"""
-
 from vehicle import Vehicle
+from store import Store
 import os
 
-# Defining an empty list called 'vehicles' that will receive all the vehicles that the user will describe...
-vehicles = []
-# Creating an empty list that will receive every vehicle relation...
-vehicles_relations = []
+store = Store("California Vehicles")
 
-for i in range(3):
+while True:
+    choice = input(
+        "Choose an option:\n\n"
+        "[0] - Leave\n" \
+        "[1] - Add Vehicle\n" \
+        "[2] - List Vehicles\n"
+        "[3] - Delete Vehicle\n"
+        "[4] - Change Vehicle Specs\n")
 
-    name = input("\nType the name of the vehicle: ")
-    power = int(input("Type the amount of power of the vehicle: "))
-    weight = float(input("How much does the vehicle weight: "))
+    if choice == "0":
+        os.system("cls")
+        print("Bye!")
+        break
+    
+    elif choice == "1":
+        os.system("cls")
+        name = input("Type the vehicle name: ")
+        power = int(input("Type the vehicle power: "))
+        weight = float(input("Type the vehicle weight: "))
+        os.system("cls")
 
-#   Creating object 'new_vehicle'...
-    new_vehicle = Vehicle(name, power, weight)
+        store.add_vehicle(name, power, weight)
+    
+    elif choice == "2":
+        os.system("cls")
+        store.list_vehicles()
+    
+    elif choice == "3":
+        os.system("cls")
+        store.list_vehicles()
+        id = int(input("Type the ID of the vehicle you want to delete: "))
+        os.system("cls")
+        print(store.delete_vehicle(id))
 
-#   Adding every relation inside of the list...
-    vehicles_relations.append(new_vehicle.power_weight())
+    elif choice == "4":
+        os.system("cls")
+        store.list_vehicles()
+        id = int(input("Type the ID of the vehicle you want to modify: "))
+        choice_modify = input(
+        "\nChoose an option:\n\n"
+        "[1] - Change Name\n" \
+        "[2] - Change Power\n" \
+        "[3] - Change Weight\n")
 
-    vehicles.append(new_vehicle)
-
-# Getting the minimum value of the list...
-min_relation = min(vehicles_relations)
-# Getting the index of the element that has the lower relation...
-min_relation_index = vehicles_relations.index(min_relation)
-
-os.system('cls')
-
-# Showing the vehicle with the lowest relation... 
-print("\nYou can see bellow the attributes of the vehicle with the lower Power/Weight relation:")
-print(str(vehicles[min_relation_index]))
+        if choice_modify == "1":
+            os.system("cls")
+            new_name = input("Set the new name: ")
+            store.list_of_vehicles[store.modify_vehicle(id)]['Name'] = new_name
+            os.system("cls")
+            
+        elif choice_modify == "2":
+            os.system("cls")
+            new_power = int(input("Set the new power: "))
+            store.list_of_vehicles[store.modify_vehicle(id)]['Power'] = new_power
+            store.list_of_vehicles[store.modify_vehicle(id)]['Power/Weight'] = new_power/store.list_of_vehicles[store.modify_vehicle(id)]['Weight']
+            os.system("cls")
+            
+        elif choice_modify == "3":
+            os.system("cls")
+            new_weight = int(input("Set the new weight: "))
+            store.list_of_vehicles[store.modify_vehicle(id)]['Weight'] = new_weight
+            store.list_of_vehicles[store.modify_vehicle(id)]['Power/Weight'] = store.list_of_vehicles[store.modify_vehicle(id)]['Power']/new_weight
+            os.system("cls")
+            
+        else:
+            os.system("cls")
+            print("You did not type a valid option!\n")
+    
+    else:
+        os.system("cls")
+        print("Type a valid option!\n")
